@@ -1,2 +1,7 @@
-node_modules/
-.env
+#bin folder
+/bin
+bin/
+
+# dependencies
+/node_modules
+/bin
