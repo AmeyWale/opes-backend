@@ -5,3 +5,6 @@ bin/
 # dependencies
 /node_modules
 /bin
+
+
+.env
