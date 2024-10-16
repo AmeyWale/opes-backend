@@ -1,7 +1,6 @@
 const studentRepository = require('../repositories/studentRepository');
 
 exports.createStudent = async (studentData) => {
-  // we will add the other logic later here
   console.log("creating the new student");
   return await studentRepository.createStudent(studentData);
 };
@@ -20,5 +19,19 @@ exports.getStudentById = async (id) => {
     return await studentRepository.getStudentById(id); ID
   } catch (error) {
     throw new Error('Error fetching student: ' + error.message);
+  }
+};
+
+// Update a student by ID
+exports.updateStudent = async (id, updatedData) => {
+  console.log("inside the update student service for id : "+id);
+  try {
+    const updatedStudent = await studentRepository.updateStudent(id, updatedData);
+    if (!updatedStudent) {
+      throw new Error('Student not found or update failed');
+    }
+    return updatedStudent;
+  } catch (error) {
+    throw new Error('Error updating student: ' + error.message);
   }
 };

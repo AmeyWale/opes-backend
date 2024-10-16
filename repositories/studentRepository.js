@@ -37,3 +37,20 @@ exports.getStudentById = async (id) => {
     throw new Error("Error fetching student");
   }
 };
+
+
+// Update a student by ID
+exports.updateStudent = async (id, updatedData) => {
+  try {
+    const updatedStudent = await Student.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+    if (!updatedStudent) {
+      console.log("No student found to update with ID: " + id);
+      return null;
+    }
+    console.log("Updated student with ID: " + id);
+    return updatedStudent;
+  } catch (error) {
+    console.error("Error updating student: ", error);
+    throw new Error("Error updating student");
+  }
+};

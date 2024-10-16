@@ -9,5 +9,7 @@ router.get('/', studentController.getAllStudents);
 
 router.get('/:id', studentController.getStudentById);
 
+router.put('/:id', validateStudent, studentController.updateStudent);
+
 
 module.exports = router;
