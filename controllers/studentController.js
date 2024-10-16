@@ -61,3 +61,29 @@ exports.getStudentById = async (req, res) => {
     });
   }
 };
+
+
+// Update a student by ID
+exports.updateStudent = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+  try {
+    const updatedStudent = await studentService.updateStudent(id, updatedData);
+    if (!updatedStudent) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Student not found or update failed',
+      });
+    }
+    return res.status(200).json({
+      status: 'success',
+      message: 'Student updated successfully',
+      data: updatedStudent,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 'error',
+      message: error.message,
+    });
+  }
+};
