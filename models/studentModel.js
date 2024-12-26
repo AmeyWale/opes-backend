@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const studentSchema = new mongoose.Schema({
   uniqueId: { type: String, required: true },
@@ -11,4 +11,4 @@ const studentSchema = new mongoose.Schema({
   collegeName: { type: String, required: true },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Student', studentSchema);
+export default mongoose.model('Student', studentSchema);

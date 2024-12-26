@@ -1,24 +1,38 @@
-const studentRepository = require('../repositories/studentRepository');
+import * as studentRepository from '../repositories/studentRepository.js';
 
-exports.createStudent = async (studentData) => {
-  // we will add the other logic later here
+export const createStudent = async (studentData) => {
   console.log("creating the new student");
   return await studentRepository.createStudent(studentData);
 };
 
-exports.getAllStudents = async () => {
-  console.log("inside the student service: Getting the all studnet.")
+export const getAllStudents = async () => {
+  console.log("inside the student service: Getting all students.");
   try {
-    return await studentRepository.getAllStudents(); 
+    return await studentRepository.getAllStudents();
   } catch (error) {
     throw new Error('Error fetching students: ' + error.message);
   }
 };
 
-exports.getStudentById = async (id) => {
+export const getStudentById = async (id) => {
   try {
-    return await studentRepository.getStudentById(id); ID
+    return await studentRepository.getStudentById(id);
   } catch (error) {
     throw new Error('Error fetching student: ' + error.message);
   }
 };
+
+// Update a student by ID
+export const updateStudent = async (id, updatedData) => {
+  console.log("inside the update student service for id: " + id);
+  try {
+    const updatedStudent = await studentRepository.updateStudent(id, updatedData);
+    if (!updatedStudent) {
+      throw new Error('Student not found or update failed');
+    }
+    return updatedStudent;
+  } catch (error) {
+    throw new Error('Error updating student: ' + error.message);
+  }
+};
+

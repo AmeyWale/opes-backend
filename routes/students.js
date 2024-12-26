@@ -1,13 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const studentController = require('../controllers/studentController');
-const validateStudent = require('../middlewares/validateStudent');
+import express from "express";
+import * as studentController from '../controllers/studentController.js';
+import validateStudent from '../middlewares/validateStudent.js';
 
-router.post('/register', validateStudent, studentController.registerStudent);
+const StudentRouter = express.Router();
 
-router.get('/', studentController.getAllStudents);
+StudentRouter.post('/register', validateStudent, studentController.registerStudent);
 
-router.get('/:id', studentController.getStudentById);
+StudentRouter.get('/', studentController.getAllStudents);
 
+StudentRouter.get('/:id', studentController.getStudentById);
 
-module.exports = router;
+StudentRouter.put('/:id', validateStudent, studentController.updateStudent);
+
+export default StudentRouter;
