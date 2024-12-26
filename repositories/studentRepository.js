@@ -1,5 +1,6 @@
-const Student = require('../models/studentModel');
-exports.createStudent = async (studentData) => {
+import Student from '../models/studentModel.js';
+
+const createStudent = async (studentData) => {
   console.log("inside the studentReposity.js");
   console.log("creating the new student");
   const student = new Student(studentData);
@@ -9,9 +10,8 @@ exports.createStudent = async (studentData) => {
   return student;
 };
 
-
 // Get all students
-exports.getAllStudents = async () => {
+const getAllStudents = async () => {
   try {
     const students = await Student.find();
     console.log("Retrieved all students");
@@ -22,8 +22,7 @@ exports.getAllStudents = async () => {
   }
 };
 
-
-exports.getStudentById = async (id) => {
+const getStudentById = async (id) => {
   try {
     const student = await Student.findById(id);
     if (!student) {
@@ -38,9 +37,8 @@ exports.getStudentById = async (id) => {
   }
 };
 
-
 // Update a student by ID
-exports.updateStudent = async (id, updatedData) => {
+const updateStudent = async (id, updatedData) => {
   try {
     const updatedStudent = await Student.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
     if (!updatedStudent) {
@@ -54,3 +52,11 @@ exports.updateStudent = async (id, updatedData) => {
     throw new Error("Error updating student");
   }
 };
+
+export {
+  createStudent,
+  getAllStudents,
+  getStudentById,
+  updateStudent,
+};
+
