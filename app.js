@@ -6,9 +6,9 @@ import createError from 'http-errors';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 
-import indexRouter from './routes/index.js';
-import usersRouter from './routes/users.js';
+
 import studentRouter from './routes/students.js';
+import TeacherRouter from './routes/teacher.js';
 
 dotenv.config();
 
@@ -19,8 +19,8 @@ const app = express();
 connectDB();
 
 // View engine setup
-app.set('views', path.join(path.resolve(), 'views'));
-app.set('view engine', 'jade');
+// app.set('views', path.join(path.resolve(), 'views'));
+// app.set('view engine', 'jade');
 
 // Middleware
 app.use(logger('dev'));
@@ -30,9 +30,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(path.resolve(), 'public')));
 
 // Routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// app.use('/', indexRouter);
+// app.use('/users', usersRouter);
 app.use('/api/students', studentRouter);
+app.use('/api/teachers', TeacherRouter);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -46,8 +47,8 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // Render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).json({message: err.message || 'An unexpected error occurred.',});
+  // res.render('error');
 });
 
 // Start the server
