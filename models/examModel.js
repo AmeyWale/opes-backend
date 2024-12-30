@@ -62,7 +62,27 @@ const ExamSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true },
     date: { type: Date, required: true },
-    duration: { type: String, required: true },
+    startTime: { type: Date, required: true },
+    endTime: { type: Date, required: true },
+    // duration: { type: String, required: true },
+    randomizeQuestionSequence: { 
+      type: Boolean, 
+      required: true, 
+      default: false // Default behavior: questions appear in the same order for all users
+    },
+    showResult: { 
+      type: Boolean, 
+      required: true, 
+      default: false // Default behavior: results are not shown to users
+    },
+    passingScore: { 
+      type: Number, 
+      required: true, 
+      validate: {
+        validator: (v) => v >= 0, // Ensure the passing score is non-negative
+        message: 'Passing score must be a non-negative number.'
+      }
+    },
     questions: {
       type: [QuestionSchema],
       validate: {

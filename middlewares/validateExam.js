@@ -1,10 +1,26 @@
 export const validateExam = (req, res, next) => {
-  const { title, description, date, duration, questions } = req.body;
+  const { title, description, date, startTime, endTime, questions, randomizeQuestionSequence, showResult, passingScore } = req.body;
 
   try {
     // Validate required fields
-    if (!title || !description || !date || !duration) {
-      throw new Error('All fields (title, description, date, and duration) are required.');
+    if (!title || !description || !date || !startTime || !endTime) {
+      throw new Error('All fields (title, description, date, startTime, and endTime) are required.');
+    }
+
+    if (new Date(startTime) >= new Date(endTime)) {
+      throw new Error('The startTime must be earlier than the endTime.');
+    }
+
+    if (typeof randomizeQuestionSequence !== 'boolean') {
+      throw new Error('randomizeQuestionSequence must be a boolean value.');
+    }
+
+    if (typeof showResult !== 'boolean') {
+      throw new Error('showResult must be a boolean value.');
+    }
+
+    if (typeof passingScore !== 'number' || passingScore < 0) {
+      throw new Error('Passing score must be a non-negative number.');
     }
 
     if (!questions || questions.length === 0) {

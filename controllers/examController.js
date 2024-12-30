@@ -3,13 +3,29 @@ import Student from '../models/studentModel';//importing student model
 
 // Create an Exam
 export const createExam = async (req, res) => {
-  const { title, description, date, duration, questions, createdBy } = req.body;
+  const { title, description, date, startTime, endTime, duration, questions, createdBy, randomizeQuestionSequence, showResult, passingScore } = req.body;
 
   try {
-    if (!title || !description || !date || !duration || !createdBy) {
+    if (!title || !description || !date || !startTime || !endTime || !createdBy) {
       return res
         .status(400)
-        .json({ error: 'All fields (title, description, date, duration, createdBy) are required.' });
+        .json({ error: 'All fields (title, description, date, startTime, endTime, createdBy) are required.' });
+    }
+
+    if (new Date(startTime) >= new Date(endTime)) {
+      return res.status(400).json({ error: 'The startTime must be earlier than the endTime.' });
+    }
+
+    if (typeof randomizeQuestionSequence !== 'boolean') {
+      return res.status(400).json({ error: 'randomizeQuestionSequence must be a boolean value.' });
+    }
+
+    if (typeof showResult !== 'boolean') {
+      return res.status(400).json({ error: 'showResult must be a boolean value.' });
+    }
+
+    if (typeof passingScore !== 'number' || passingScore < 0) {
+      return res.status(400).json({ error: 'Passing score must be a non-negative number.' });
     }
 
     if (!questions || questions.length === 0) {
@@ -42,7 +58,12 @@ export const createExam = async (req, res) => {
       title,
       description,
       date,
-      duration,
+      startTime,
+      endTime,
+      // duration,
+      randomizeQuestionSequence: randomizeQuestionSequence || false,
+      showResult: showResult || false,
+      passingScore,
       questions,
       createdBy,
     });
@@ -55,6 +76,7 @@ export const createExam = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Fetch an Exam by Assessment ID
 export const getExamByAssessmentId = async (req, res) => {
@@ -84,56 +106,6 @@ export const getExamByAssessmentId = async (req, res) => {
     };
 
     return res.status(200).json(sanitizedExam);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Fetch All Exams
-export const getAllExams = async (req, res) => {
-  try {
-    const exams = await Exam.find();
-    return res.status(200).json(exams);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Update an Exam
-export const updateExam = async (req, res) => {
-  const { assessmentId } = req.params;
-  const updateData = req.body;
-
-  try {
-    const exam = await Exam.findOneAndUpdate({ assessmentId }, updateData, { new: true });
-
-    if (!exam) {
-      return res.status(404).json({ error: 'Exam not found.' });
-    }
-
-    return res.status(200).json({
-      exam,
-      message: 'Exam updated successfully.',
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Delete an Exam
-export const deleteExam = async (req, res) => {
-  const { assessmentId } = req.params;
-
-  try {
-    const exam = await Exam.findOneAndDelete({ assessmentId });
-
-    if (!exam) {
-      return res.status(404).json({ error: 'Exam not found.' });
-    }
-
-    return res.status(200).json({
-      message: 'Exam deleted successfully.',
-    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -192,6 +164,7 @@ export const submitExamResponse = async (req, res) => {
     });
 
     const totalMarks = totalCorrect; // Customize scoring logic if needed
+    const passed = totalMarks >= exam.passingScore;
 
     exam.responses.push({
       studentId,
@@ -223,6 +196,7 @@ export const submitExamResponse = async (req, res) => {
       message: 'Response submitted successfully.',
       totalCorrect,
       totalMarks,
+      passed,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
