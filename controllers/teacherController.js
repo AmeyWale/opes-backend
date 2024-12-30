@@ -22,7 +22,7 @@ export const registerTeacher = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.status(201).json({ message: 'Teacher registered successfully.', teacher });
+    return res.status(201).json({ message: 'Teacher registered successfully.'});
   } catch (error) {
     res.status(500).json({ message: error.message || 'Error registering teacher.' });
   }
