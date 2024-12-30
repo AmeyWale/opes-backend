@@ -1,4 +1,5 @@
-import Exam from '../models/Exam';
+import Exam from '../models/Exam'; // Import the Exam model
+import Student from '../models/studentModel';//importing student model 
 
 // Create an Exam
 export const createExam = async (req, res) => {
