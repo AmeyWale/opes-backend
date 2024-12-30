@@ -1,5 +1,4 @@
 import express from 'express';
-// import { validateCamFeed } from '../middlewares/validateCamFeed.js';
 import { handleCamFeed } from '../controllers/proctorController.js';
 
 const proctorRouter = express.Router();
