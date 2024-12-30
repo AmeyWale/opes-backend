@@ -37,9 +37,8 @@ app.use(express.static(path.join(path.resolve(), 'public')));
 // Routes
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
-app.use('/', indexRouter);
+
 app.use('/proctoring',proctorRouter)
-app.use('/users', usersRouter);
 app.use('/api/students', studentRouter);
 app.use('/api/teachers', TeacherRouter);
 
