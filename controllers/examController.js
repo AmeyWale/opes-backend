@@ -1,4 +1,5 @@
 import Exam from '../models/Exam'; // Import the Exam model
+import Student from '../models/studentModel';//importing student model 
 
 // Create an Exam
 export const createExam = async (req, res) => {
@@ -154,6 +155,28 @@ export const submitExamResponse = async (req, res) => {
       return res.status(404).json({ error: 'Exam not found.' });
     }
 
+    // Ensure the current time is within the exam time frame
+    const currentTime = new Date();
+    if (currentTime > exam.examEndDateTime) {
+      return res.status(400).json({ error: 'Exam submission time has passed.' });
+    }
+
+    // Ensuring the student is registered for this assessment
+    const student = await Student.findOne({ assessmentId, _id: studentId });
+    if (!student) {
+      return res.status(403).json({ error: 'Student is not registered for this assessment.' });
+    }
+
+    // Check if the student has already submitted the exam
+    const existingResponse = exam.responses.find(
+      (response) => response.studentId.toString() === studentId.toString()
+    );
+
+    if (existingResponse) {
+      return res.status(400).json({ error: 'Student has already submitted the exam.' });
+    }    
+
+
     let totalCorrect = 0;
     const processedAnswers = answers.map(({ questionId, studentAnswer }) => {
       const question = exam.questions.id(questionId);
@@ -179,6 +202,23 @@ export const submitExamResponse = async (req, res) => {
 
     await exam.save();
 
+    // Update the Student document
+    const updatedStudent = await Student.findOneAndUpdate(
+      { uniqueId: studentId, assessmentId }, // Find the student for this assessment
+      {
+        $set: {
+          answers: processedAnswers,
+          totalMarks,
+          totalCorrect,
+        },
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedStudent) {
+      return res.status(404).json({ error: 'Student record not found for this assessment.' });
+    }
+
     return res.status(200).json({
       message: 'Response submitted successfully.',
       totalCorrect,
@@ -188,3 +228,4 @@ export const submitExamResponse = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+

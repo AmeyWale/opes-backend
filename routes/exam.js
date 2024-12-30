@@ -1,5 +1,6 @@
 import express from 'express'; // ES6 import syntax
-import { isAuthenticated, isTeacher } from '../middleware/authMiddleware.js'; // Named imports
+// import { isAuthenticated, isTeacher } from '../middleware/authMiddleware.js'; // Named imports
+import { isAuthenticated, isTeacher } from '../middlewares/authMiddleware.js';
 import { createExam, getExamByAssessmentId, getAllExams, updateExam, deleteExam, submitExamResponse } from '../controllers/examController.js'; // Named imports
 import validateExam from '../middleware/validateExam.js'; // Default import for middleware
 

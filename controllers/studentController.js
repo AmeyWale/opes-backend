@@ -1,18 +1,44 @@
 import { createStudent, getAllStudents as fetchAllStudents, getStudentById as fetchStudentById, updateStudent as updateStudentService } from '../services/studentService.js';
 
+import Exam from '../models/examModel.js'
+
 export const registerStudent = async (req, res) => {
+  const { assessmentId, uniqueId } = req.body;
   try {
-    console.log("inside the student controller");
+    console.log("Registering student for assessment:", assessmentId);
+
+    // Check if the assessment exists in the Exam database
+    const exam = await Exam.findOne({ assessmentId });
+    if (!exam) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Invalid Assessment ID. The specified assessment does not exist.',
+      });
+    }
+
+     // Ensure the student isn't already registered for the exam
+     const existingStudent = await Student.findOne({ assessmentId, uniqueId });
+     if (existingStudent) {
+       return res.status(400).json({
+         status: 'error',
+         message: 'Student already registered for this assessment.',
+       });
+     }
 
     const studentData = req.body;
+
     console.log("request body " + req.body);
+
     const student = await createStudent(studentData);
+
     console.log("new student is created");
+
     return res.status(201).json({
       status: 'success',
       message: 'Registration successful',
       data: student,
     });
+    
   } catch (error) {
     return res.status(500).json({
       status: 'error',
