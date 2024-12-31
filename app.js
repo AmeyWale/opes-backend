@@ -11,6 +11,7 @@ import connectDB from './config/database.js';
 import studentRouter from './routes/students.js';
 import TeacherRouter from './routes/teacher.js';
 import proctorRouter from './routes/proctoring.js';
+import ExamRouter from './routes/exam.js';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use(express.static(path.join(path.resolve(), 'public')));
 app.use('/proctoring',proctorRouter)
 app.use('/api/students', studentRouter);
 app.use('/api/teachers', TeacherRouter);
+app.use('/api/exams', ExamRouter);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

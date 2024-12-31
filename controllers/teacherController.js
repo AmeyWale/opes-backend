@@ -84,4 +84,30 @@ export const getExamsByLoggedInTeacher = async (req, res) => {
   }
 };
 
+export const getExamByAssessmentId = async (req, res) => {
+  const { assessmentId } = req.params;
+  // const { role, id: userId } = req.user;
 
+  if (!assessmentId) {
+    return res.status(400).json({ error: 'Assessment ID is required.' });
+  }
+
+  try {
+    const exam = await Exam.findOne({ assessmentId });
+
+    if (!exam) {
+      return res.status(404).json({ error: 'Exam not found.' });
+    }
+
+    const sanitizedExam = {
+      ...exam.toObject(),
+      questions: exam.questions.map((question) => {
+        return question; // Include all details for teachers
+      }),
+    };
+
+    return res.status(200).json(sanitizedExam);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

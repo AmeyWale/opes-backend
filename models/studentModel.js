@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const studentSchema = new mongoose.Schema({
   
   //  Assessment ID reference to validate exam association
-  assessmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam', required: true },
+  examId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam', required: true },
   uniqueId: { type: String, required: true },
   name: { type: String, required: true },
   branch: { type: String, required: true },
@@ -17,7 +17,7 @@ const studentSchema = new mongoose.Schema({
   answers: [
     {
       questionId: { type: mongoose.Schema.Types.ObjectId, required: false },
-      studentAnswer: { type: Number, required: true }, // 1-based index for MCQ
+      studentAnswer: { type: String, required: true }, 
       isCorrect: { type: Boolean, default: false },
     },
   ],

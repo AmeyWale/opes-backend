@@ -1,4 +1,5 @@
 import { createStudent, getAllStudents as fetchAllStudents, getStudentById as fetchStudentById, updateStudent as updateStudentService } from '../services/studentService.js';
+import Student from '../models/studentModel.js';
 
 import Exam from '../models/examModel.js'
 
@@ -16,8 +17,11 @@ export const registerStudent = async (req, res) => {
       });
     }
 
+    let examId = exam.get("_id")
+    req.body.examId = examId
+    
      // Ensure the student isn't already registered for the exam
-     const existingStudent = await Student.findOne({ assessmentId, uniqueId });
+     const existingStudent = await Student.findOne({ examId, uniqueId });
      if (existingStudent) {
        return res.status(400).json({
          status: 'error',
@@ -40,6 +44,8 @@ export const registerStudent = async (req, res) => {
     });
     
   } catch (error) {
+    console.log(error.message);
+    
     return res.status(500).json({
       status: 'error',
       message: error.message,
