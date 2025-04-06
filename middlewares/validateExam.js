@@ -3,7 +3,7 @@ const validateExam = (req, res, next) => {
 
   try {
     // Validate required fields
-    if (!title || !description || !date || !startTime || !endTime) {
+    if (!title || !description || !startTime || !endTime) {
       throw new Error('All fields (title, description, date, startTime, and endTime) are required.');
     }
 
@@ -29,11 +29,11 @@ const validateExam = (req, res, next) => {
 
     // Validate each question
     questions.forEach((question, index) => {
-      if (!question.type || !['descriptive', 'image-based'].includes(question.type)) {
-        throw new Error(`Question ${index + 1} must have a valid type: \"descriptive\" or \"image-based\".`);
+      if (!question.type || !['mcq', 'essay'].includes(question.type)) {
+        throw new Error(`Question ${index + 1} must have a valid type: \"mcq\" or \"essay\".`);
       }
 
-      if (question.type === 'descriptive' && !question.text) {
+      if (question.type === 'essay' && !question.question) {
         throw new Error(`Text is required for descriptive question ${index + 1}.`);
       }
 
@@ -45,7 +45,7 @@ const validateExam = (req, res, next) => {
         throw new Error(`Question ${index + 1} must have exactly 4 options for multiple-choice questions.`);
       }
 
-      if (question.correctAnswer && (question.correctAnswer < 1 || question.correctAnswer > 4)) {
+      if (!question.correctAnswer) {
         throw new Error(`Correct answer for question ${index + 1} must be a number between 1 and 4.`);
       }
     });
@@ -53,6 +53,8 @@ const validateExam = (req, res, next) => {
     // Proceed to the next middleware or controller
     next();
   } catch (error) {
+    console.log(error.message);
+    
     res.status(400).json({ error: error.message });
   }
 };

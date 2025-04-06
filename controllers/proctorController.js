@@ -21,6 +21,7 @@ export const handleCamFeed = async (req,res) => {
         //     return res.status(500).send('Error saving the image');
         //     }
         // })
+        
         // Call the service to process the frame
         // const result = await processFrame(frame);
 
@@ -44,7 +45,7 @@ export const handleCamFeed = async (req,res) => {
          });
 
     } catch (error) {
-        console.error("Error processing frame:", error);
+        // console.error("Error processing frame:", error);
         // res.status(500).json({ error: "Internal server error" });
     }
     

@@ -1,4 +1,5 @@
 import { createStudent, getAllStudents as fetchAllStudents, getStudentById as fetchStudentById, updateStudent as updateStudentService } from '../services/studentService.js';
+import Student from '../models/studentModel.js';
 
 import Exam from '../models/examModel.js'
 import Student from '../models/studentModel.js';
