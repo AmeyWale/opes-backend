@@ -1,8 +1,12 @@
 import * as studentRepository from '../repositories/studentRepository.js';
 
 export const createStudent = async (studentData) => {
-  console.log("creating the new student");
-  return await studentRepository.createStudent(studentData);
+  try {
+    const student = await studentRepository.createStudent(studentData);
+    return student;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getAllStudents = async () => {

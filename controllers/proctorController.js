@@ -22,10 +22,27 @@ export const handleCamFeed = async (req,res) => {
         //     }
         // })
         // Call the service to process the frame
-        const result = await processFrame(frame);
+        // const result = await processFrame(frame);
 
-        // Send the response back to the client
-        res.status(200).json({ message: "Frame processed successfully", result });
+        // // Send the response back to the client
+        // res.status(200).json({ message: "Frame processed successfully", result });
+
+
+//The following code needs to be tested for frame feed
+         // Immediate response
+         res.status(200).json({ message: "Frame processing started" });
+
+        // Offload the frame processing to a background task (non-blocking)
+         setImmediate(async () => {
+             try {
+                 const result = await processFrame(frame);
+                 // Here you can store the result in a database or send it to the user later.
+                 console.log("Frame processed:", result);
+             } catch (error) {
+                 console.error("Error processing frame:", error);
+             }
+         });
+
     } catch (error) {
         console.error("Error processing frame:", error);
         // res.status(500).json({ error: "Internal server error" });

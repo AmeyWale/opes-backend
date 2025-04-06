@@ -1,4 +1,4 @@
-export const validateExam = (req, res, next) => {
+const validateExam = (req, res, next) => {
   const { title, description, date, startTime, endTime, questions, randomizeQuestionSequence, showResult, passingScore } = req.body;
 
   try {
@@ -56,3 +56,5 @@ export const validateExam = (req, res, next) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export default validateExam;
