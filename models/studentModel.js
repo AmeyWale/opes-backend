@@ -27,7 +27,13 @@ const studentSchema = new mongoose.Schema({
   totalCorrect: { type: Number, default: 0 },
 
   // Violations count
-  violationsCount: { type: Number, default: 0 },
+  // violationsCount: { type: Number, default: 0 },
+  violations: [
+    {
+      timestamp: { type: Date, default: Date.now },
+      reason: { type: String, required: true },
+    },
+  ],
 }, { timestamps: true });
 
 export default mongoose.model('Student', studentSchema);
