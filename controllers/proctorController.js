@@ -23,12 +23,12 @@ export const handleCamFeed = async (req,res) => {
         // })
         
         // Call the service to process the frame
-        // const result = await processFrame(frame);
+        const result = await processFrame(frame);
 
         // Send the response back to the client
         res.status(200).json({ message: "Frame processed successfully", result });
     } catch (error) {
-        // console.error("Error processing frame:", error);
+        console.error("Error processing frame:", error);
         // res.status(500).json({ error: "Internal server error" });
     }
     

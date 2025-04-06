@@ -45,7 +45,7 @@ const validateExam = (req, res, next) => {
         throw new Error(`Question ${index + 1} must have exactly 4 options for multiple-choice questions.`);
       }
 
-      if (!question.correctAnswer) {
+      if (question.type !== 'essay' && !question.correctAnswer) {
         throw new Error(`Correct answer for question ${index + 1} must be a number between 1 and 4.`);
       }
     });
