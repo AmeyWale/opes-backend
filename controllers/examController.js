@@ -1,4 +1,4 @@
-import Exam from '../models/examModel.js'; // Import the Exam model
+import Exam from '../models/examModel.js'
 import Student from '../models/studentModel.js';//importing student model 
 
 // Create an Exam
@@ -62,6 +62,56 @@ export const getExamByAssessmentId = async (req, res) => {
   }
 };
 
+// Fetch All Exams
+export const getAllExams = async (req, res) => {
+  console.log("Getting all exams");
+  try {
+    const exams = await Exam.find();
+    return res.status(200).json(exams);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Update an Exam
+export const updateExam = async (req, res) => {
+  const { assessmentId } = req.params;
+  const updateData = req.body;
+
+  try {
+    const exam = await Exam.findOneAndUpdate({ assessmentId }, updateData, { new: true });
+
+    if (!exam) {
+      return res.status(404).json({ error: 'Exam not found.' });
+    }
+
+    return res.status(200).json({
+      exam,
+      message: 'Exam updated successfully.',
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Delete an Exam
+export const deleteExam = async (req, res) => {
+  const { assessmentId } = req.params;
+
+  try {
+    const exam = await Exam.findOneAndDelete({ assessmentId });
+
+    if (!exam) {
+      return res.status(404).json({ error: 'Exam not found.' });
+    }
+
+    return res.status(200).json({
+      message: 'Exam deleted successfully.',
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 // Submit Exam Response
 export const submitExamResponse = async (req, res) => {
   const { assessmentId, answers, uniqueId } = req.body;
@@ -77,6 +127,8 @@ export const submitExamResponse = async (req, res) => {
       return res.status(404).json({ message: 'Exam not found.' });
     }
 
+    const examObjectId = exam._id;
+
     // Ensure the current time is within the exam time frame
     const currentTime = new Date();
     if (currentTime > exam.examEndDateTime) {
@@ -84,7 +136,7 @@ export const submitExamResponse = async (req, res) => {
     }
 
     // Ensuring the student is registered for this assessment
-    const student = await Student.findOne({ examId:exam._id, uniqueId });
+    const student = await Student.findOne({ assessmentId: examObjectId, _id: studentId });
     if (!student) {
       return res.status(403).json({ message: 'Student is not registered for this assessment.' });
     }
@@ -185,21 +237,72 @@ export const updateExam = async (req, res) => {
   }
 };
 
-// Delete an Exam
-export const deleteExam = async (req, res) => {
+//get Exam Analytics 
+export const getExamAnalytics = async (req, res) => {
   const { assessmentId } = req.params;
 
   try {
-    const exam = await Exam.findOneAndDelete({ assessmentId });
+    const exam = await Exam.findOne({ assessmentId });
+    if (!exam) return res.status(404).json({ message: 'Exam not found' });
 
-    if (!exam) {
-      return res.status(404).json({ error: 'Exam not found.' });
-    }
+    // Total students registered for this exam
+    const allStudents = await Student.find({ assessmentId: exam._id });
+    const totalStudents = allStudents.length;
 
-    return res.status(200).json({
-      message: 'Exam deleted successfully.',
-    });
+    // Students who submitted (in responses[])
+    const submissions = exam.responses || [];
+    const totalSubmissions = submissions.length;
+
+    const passingScore = exam.passingScore;
+
+    // Compute pass count and average
+    let passCount = 0;
+    let totalMarksSum = 0;
+
+    const submissionDetails = await Promise.all(
+      submissions.map(async (response) => {
+        const student = await Student.findById(response.studentId);
+        const isPassed = response.totalMarks >= passingScore;
+
+        totalMarksSum += response.totalMarks;
+        if (isPassed) passCount++;
+
+        return {
+          name: student?.name || 'Unknown',
+          score: response.totalMarks,
+          status: isPassed ? 'Passed' : 'Failed',
+          submissionTime: student?.updatedAt || null,
+        };
+      })
+    );
+
+    const averageScore = totalSubmissions ? (totalMarksSum / totalSubmissions).toFixed(2) : 0;
+    const submissionRate = totalStudents ? ((totalSubmissions / totalStudents) * 100).toFixed(2) : 0;
+    const passRate = totalSubmissions ? ((passCount / totalSubmissions) * 100).toFixed(2) : 0;
+
+    const result = {
+      examInfo: {
+        title: exam.title,
+        date: exam.date,
+        startTime: exam.startTime,
+        endTime: exam.endTime,
+      },
+      statistics: {
+        totalStudents,
+        totalSubmissions,
+        passedStudents: passCount,
+        averageScore: Number(averageScore),
+      },
+      overview: {
+        submissionRate: `${submissionRate}%`,
+        passRate: `${passRate}%`,
+      },
+      submissions: submissionDetails,
+    };
+
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching exam analytics:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

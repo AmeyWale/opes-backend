@@ -1,5 +1,5 @@
 const validateExam = (req, res, next) => {
-  const { title, description, startTime, endTime, questions, randomizeQuestionSequence, showResult, passingScore } = req.body;
+  const { title, description, date, startTime, endTime, questions, randomizeQuestionSequence, showResult, passingScore } = req.body;
 
   try {
     // Validate required fields

@@ -11,6 +11,8 @@ StudentRouter.get('/', studentController.getAllStudents);
 
 StudentRouter.get('/:id', studentController.getStudentById);
 
+StudentRouter.get('/:studentId/exam/:examId/details', studentController.getStudentExamDetails);
+
 StudentRouter.put('/:id', validateStudent, studentController.updateStudent);
 
 export default StudentRouter;
