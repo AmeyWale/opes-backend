@@ -259,8 +259,6 @@ export const getExamAnalytics = async (req, res) => {
 
         return {
           id: student._id,
-          uniqueId: student.uniqueId,
-          phone: student.phoneNumber,
           name: student.name || 'Unknown',
           score: student.totalMarks,
           status: isPassed ? 'Passed' : 'Failed',
